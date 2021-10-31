@@ -3,8 +3,12 @@
     {
       "name": "ep_chat_log_join_leave",
       "client_hooks": {
+        "chatNewMessage": "ep_chat_log_join_leave/static/js"
       },
       "hooks": {
+        "eejsBlock_styles": "",
+        "userJoin": "",
+        "userLeave": ""
       }
     }
   ]
