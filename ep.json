@@ -1,0 +1,11 @@
+{
+  "parts": [
+    {
+      "name": "ep_chat_log_join_leave",
+      "client_hooks": {
+      },
+      "hooks": {
+      }
+    }
+  ]
+}

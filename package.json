@@ -1,0 +1,50 @@
+{
+  "name": "ep_chat_log_join_leave",
+  "version": "1.0.0",
+  "description": "Etherpad plugin to log user joins and leaves in the chat history",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Warning: no test specified\" >&2",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ether/ep_chat_log_join_leave.git"
+  },
+  "keywords": [
+    "ep",
+    "etherpad",
+    "plugin"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ether/ep_chat_log_join_leave/issues"
+  },
+  "homepage": "https://github.com/ether/ep_chat_log_join_leave#readme",
+  "devDependencies": {
+    "eslint": "^7.28.0",
+    "eslint-config-etherpad": "^2.0.0",
+    "eslint-plugin-cypress": "^2.11.3",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-mocha": "^9.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-you-dont-need-lodash-underscore": "^6.12.0"
+  },
+  "peerDependencies": {
+    "ep_etherpad-lite": ">=1.8.6"
+  },
+  "engines": {
+    "node": ">=12.13.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": "etherpad/plugin"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://etherpad.org/"
+  }
+}
