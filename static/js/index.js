@@ -1,9 +1,6 @@
 'use strict';
 
-// Copied from Etherpad's src/static/js/chat.js.
-// TODO: Avoid duplication.
-const charEsc = (c) => c === '.' ? '-' : `z${c.charCodeAt(0)}z`;
-const authorClass = (authorId) => `author-${authorId.replace(/[^a-y0-9]/g, charEsc)}`;
+const {padutils} = require('ep_etherpad-lite/static/js/pad_utils');
 
 // In case a translation is missing.
 const defaultMsg = {
@@ -45,7 +42,9 @@ exports.chatNewMessage = async (hookName, context) => {
   msgElt.append(defaultMsg[type]);
   context.rendered = document.createElement('p');
   context.rendered.classList.add(typeId);
-  context.rendered.classList.add(authorClass(context.author)); // Mimic default rendering.
-  context.rendered.dataset.authorid = context.author; // Mimic default rendering.
   context.rendered.append(timeElt, nameElt, ' ', msgElt);
+
+  // Mimic default rendering.
+  context.rendered.classList.add(`author-${padutils.encodeUserId(context.author)}`);
+  context.rendered.dataset.authorId = context.author;
 };
