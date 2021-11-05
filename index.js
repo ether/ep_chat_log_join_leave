@@ -12,6 +12,11 @@ const padMessageHandler = require('ep_etherpad-lite/node/handler/PadMessageHandl
 
 const logger = log4js.getLogger('ep_chat_log_join_leave');
 
+if (ChatMessage == null) {
+  logger.error('This version of Etherpad is unsupported. ' +
+               'Please upgrade to Etherpad v1.8.15 or later to use this plugin.');
+}
+
 /**
  * How long to wait until a disconnected user is declared gone. (Network flakiness could cause a
  * user to briefly disconnect and reconnect. Those shouldn't appear in the chat history.)
@@ -30,46 +35,35 @@ const timeout = 10000;
 const activeUsersPerPad = new Map();
 
 exports.eejsBlock_styles = (hookName, context) => {
+  if (ChatMessage == null) return;
   const css = 'ep_chat_log_join_leave/static/css/index.css';
   context.content += `<link href="../static/plugins/${css}" rel="stylesheet">`;
 };
 
 exports.userJoin = async (hookName, {authorId, padId}) => {
+  if (ChatMessage == null) return;
   if (!activeUsersPerPad.has(padId)) activeUsersPerPad.set(padId, new Map());
   const activeUsers = activeUsersPerPad.get(padId);
   if (activeUsers.has(authorId)) {
     clearTimeout(activeUsers.get(authorId));
-  } else if (ChatMessage != null) {
-    // Etherpad >= v1.8.15.
+  } else {
     const msg = new ChatMessage('', authorId, Date.now());
     msg.ep_chat_log_join_leave = 'join';
     await padMessageHandler.sendChatMessageToPadClients(msg, padId);
-  } else {
-    // Etherpad <= v1.8.14.
-    logger.warn('This version of Etherpad does not support custom chat message rendering. ' +
-                'Please upgrade to Etherpad v1.8.15 or later.');
-    const txt = 'joined the pad'; // User must upgrade Etherpad to >= v1.8.15 to localize this.
-    await padMessageHandler.sendChatMessageToPadClients(Date.now(), authorId, txt, padId);
   }
   activeUsers.set(authorId, null);
 };
 
 exports.userLeave = async (hookName, {authorId, padId}) => {
+  if (ChatMessage == null) return;
   const activeUsers = activeUsersPerPad.get(padId);
   clearTimeout(activeUsers.get(authorId));
   activeUsers.set(authorId, setTimeout(async () => {
     activeUsers.delete(authorId);
     if (activeUsers.size === 0) activeUsersPerPad.delete(padId);
     const when = Date.now() - timeout;
-    if (ChatMessage != null) {
-      // Etherpad >= v1.8.15.
-      const msg = new ChatMessage('', authorId, when);
-      msg.ep_chat_log_join_leave = 'leave';
-      await padMessageHandler.sendChatMessageToPadClients(msg, padId);
-    } else {
-      // Etherpad <= v1.8.14. Warning was logged when the user joined, no need to repeat it.
-      const txt = 'left the pad'; // User must upgrade Etherpad to >= v1.8.15 to localize this.
-      await padMessageHandler.sendChatMessageToPadClients(when, authorId, txt, padId);
-    }
+    const msg = new ChatMessage('', authorId, when);
+    msg.ep_chat_log_join_leave = 'leave';
+    await padMessageHandler.sendChatMessageToPadClients(msg, padId);
   }, timeout));
 };
