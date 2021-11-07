@@ -27,13 +27,41 @@ if (ChatMessage == null) {
 const timeout = 10000;
 
 /**
- * Maps a pad ID to another map that maps an author ID to null (if the user is currently connected)
- * or to a timeout ID for a timeout that will fire when the user has been gone long enough to inform
- * users (if the user recently disconnected).
- *
- * @type {Map<string, Map<string, number>>}
+ * Maps a {padId, authorId} pair to null (if the user is currently connected) or to an ID for a
+ * timeout that will fire when the recently disconnected user has been gone long enough to inform
+ * users about the departure.
  */
-const activeUsersPerPad = new Map();
+const activeUsers = new class {
+  constructor() {
+    /**
+     * Maps a pad ID to another map that maps an author ID to null or a timeout ID.
+     *
+     * @type {Map<string, Map<string, number>>}
+     */
+    this._users = new Map();
+  }
+
+  has(padId, authorId) {
+    return this._users.has(padId) && this._users.get(padId).has(authorId);
+  }
+
+  get(padId, authorId) {
+    const m = this._users.get(padId);
+    return m && m.get(authorId);
+  }
+
+  set(padId, authorId, value) {
+    if (!this._users.has(padId)) this._users.set(padId, new Map());
+    this._users.get(padId).set(authorId, value);
+  }
+
+  delete(padId, authorId) {
+    const m = this._users.get(padId);
+    if (m == null) return;
+    m.delete(authorId);
+    if (m.size === 0) this._users.delete(padId);
+  }
+}();
 
 exports.eejsBlock_styles = (hookName, context) => {
   if (ChatMessage == null) return;
@@ -45,16 +73,15 @@ exports.userJoin = async (hookName, {authorId, padId}) => {
   if (ChatMessage == null) return;
   assert.equal(typeof authorId, 'string');
   assert.equal(typeof padId, 'string');
-  if (!activeUsersPerPad.has(padId)) activeUsersPerPad.set(padId, new Map());
-  const activeUsers = activeUsersPerPad.get(padId);
-  if (activeUsers.has(authorId)) {
+  const timeout = activeUsers.get(padId, authorId);
+  if (timeout) {
     clearTimeout(activeUsers.get(authorId));
   } else {
     const msg = new ChatMessage('', authorId, Date.now());
     msg.ep_chat_log_join_leave = 'join';
     await padMessageHandler.sendChatMessageToPadClients(msg, padId);
   }
-  activeUsers.set(authorId, null);
+  activeUsers.set(padId, authorId, null);
 };
 
 exports.userLeave = async (hookName, {authorId, padId}) => {
@@ -64,11 +91,9 @@ exports.userLeave = async (hookName, {authorId, padId}) => {
   if (padId == null) return;
   assert.equal(typeof authorId, 'string');
   assert.equal(typeof padId, 'string');
-  const activeUsers = activeUsersPerPad.get(padId);
-  clearTimeout(activeUsers.get(authorId));
-  activeUsers.set(authorId, setTimeout(async () => {
-    activeUsers.delete(authorId);
-    if (activeUsers.size === 0) activeUsersPerPad.delete(padId);
+  clearTimeout(activeUsers.get(padId, authorId));
+  activeUsers.set(padId, authorId, setTimeout(async () => {
+    activeUsers.delete(padId, authorId);
     const when = Date.now() - timeout;
     const msg = new ChatMessage('', authorId, when);
     msg.ep_chat_log_join_leave = 'leave';
