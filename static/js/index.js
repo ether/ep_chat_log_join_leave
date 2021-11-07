@@ -8,8 +8,6 @@ const defaultMsg = {
   leave: 'left the pad',
 };
 
-exports.aceEditorCSS = (hookName, context) => ['ep_chat_log_join_leave/static/css/index.css'];
-
 exports.chatNewMessage = async (hookName, context) => {
   if (context.message == null) {
     // Etherpad <= v1.8.14 doesn't support custom message rendering. A warning was logged on the

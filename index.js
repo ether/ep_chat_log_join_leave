@@ -55,7 +55,6 @@ exports.userJoin = async (hookName, {authorId, padId}) => {
 };
 
 exports.userLeave = async (hookName, {authorId, padId}) => {
-  // TODO: l10n
   const activeUsers = activeUsersPerPad.get(padId);
   clearTimeout(activeUsers.get(authorId));
   activeUsers.set(authorId, setTimeout(async () => {
