@@ -7,6 +7,7 @@ const ChatMessage = (() => {
     return null;
   }
 })();
+const assert = require('assert').strict;
 const log4js = require('ep_etherpad-lite/node_modules/log4js');
 const padMessageHandler = require('ep_etherpad-lite/node/handler/PadMessageHandler');
 
@@ -42,6 +43,8 @@ exports.eejsBlock_styles = (hookName, context) => {
 
 exports.userJoin = async (hookName, {authorId, padId}) => {
   if (ChatMessage == null) return;
+  assert.equal(typeof authorId, 'string');
+  assert.equal(typeof padId, 'string');
   if (!activeUsersPerPad.has(padId)) activeUsersPerPad.set(padId, new Map());
   const activeUsers = activeUsersPerPad.get(padId);
   if (activeUsers.has(authorId)) {
@@ -59,6 +62,8 @@ exports.userLeave = async (hookName, {authorId, padId}) => {
   // With Etherpad <= v1.8.14, the userLeave event can fire with a nullish padId if the user
   // disconnected before sending a CLIENT_READY message.
   if (padId == null) return;
+  assert.equal(typeof authorId, 'string');
+  assert.equal(typeof padId, 'string');
   const activeUsers = activeUsersPerPad.get(padId);
   clearTimeout(activeUsers.get(authorId));
   activeUsers.set(authorId, setTimeout(async () => {
