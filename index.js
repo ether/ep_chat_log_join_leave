@@ -56,6 +56,9 @@ exports.userJoin = async (hookName, {authorId, padId}) => {
 
 exports.userLeave = async (hookName, {authorId, padId}) => {
   if (ChatMessage == null) return;
+  // With Etherpad <= v1.8.14, the userLeave event can fire with a nullish padId if the user
+  // disconnected before sending a CLIENT_READY message.
+  if (padId == null) return;
   const activeUsers = activeUsersPerPad.get(padId);
   clearTimeout(activeUsers.get(authorId));
   activeUsers.set(authorId, setTimeout(async () => {
