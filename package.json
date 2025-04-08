@@ -1,6 +1,6 @@
 {
   "name": "ep_chat_log_join_leave",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Etherpad plugin to log user joins and leaves in the chat history",
   "main": "index.js",
   "scripts": {
