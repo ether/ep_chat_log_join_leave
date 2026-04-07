@@ -7,7 +7,7 @@ Etherpad plugin to log user joins and leaves in the chat history.
 ## Installation
 
 ```
-npm install --no-save --legacy-peer-deps ep_chat_log_join_leave
+pnpm run plugins install ep_chat_log_join_leave
 ```
 
 or Use the Etherpad ``/admin`` interface.
