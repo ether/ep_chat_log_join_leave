@@ -75,7 +75,7 @@ exports.userJoin = async (hookName, {authorId, padId}) => {
   assert.equal(typeof padId, 'string');
   const timeout = activeUsers.get(padId, authorId);
   if (timeout) {
-    clearTimeout(activeUsers.get(authorId));
+    clearTimeout(timeout);
   } else {
     const msg = new ChatMessage('', authorId, Date.now());
     msg.ep_chat_log_join_leave = 'join';
