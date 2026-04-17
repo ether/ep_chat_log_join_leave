@@ -1,6 +1,6 @@
 ![Publish Status](https://github.com/ether/ep_chat_log_join_leave/workflows/Node.js%20Package/badge.svg) [![Backend Tests Status](https://github.com/ether/ep_chat_log_join_leave/actions/workflows/test-and-release.yml/badge.svg)](https://github.com/ether/ep_chat_log_join_leave/actions/workflows/test-and-release.yml)
 
-# ep_chat_log_join_leave
+# Log Join / Leave in Chat for Etherpad
 
 Etherpad plugin to log user joins and leaves in the chat history.
 
