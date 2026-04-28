@@ -2,7 +2,12 @@
 
 const ChatMessage = (() => {
   try {
-    return require('ep_etherpad-lite/static/js/ChatMessage');
+    // ChatMessage was migrated to TypeScript and is now exported as a
+    // named export; require() returns the whole module object, so pick
+    // the class out of it. Fall back to the legacy default export shape
+    // for older Etherpad releases.
+    const mod = require('ep_etherpad-lite/static/js/ChatMessage');
+    return mod.ChatMessage || mod.default || mod;
   } catch (err) {
     return null;
   }
