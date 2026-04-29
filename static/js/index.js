@@ -1,6 +1,11 @@
 'use strict';
 
-const {padutils} = require('ep_etherpad-lite/static/js/pad_utils');
+// pad_utils was migrated to TypeScript; the PadUtils singleton is now
+// the default export rather than a named `padutils` property. Pull the
+// default with a fallback to the legacy named export for older
+// Etherpad releases.
+const padUtilsMod = require('ep_etherpad-lite/static/js/pad_utils');
+const padutils = padUtilsMod.default || padUtilsMod.padutils;
 
 // In case a translation is missing.
 const defaultMsg = {
