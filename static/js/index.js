@@ -24,13 +24,15 @@ exports.chatNewMessage = async (hookName, context) => {
   if (!['join', 'leave'].includes(type)) throw new Error(`Unexpected message type: ${type}`);
   const typeId = `ep_chat_log_join_leave-${type}`; // Used for classes and html10n.
 
-  // Because the default rendering is overridden below, context.text and context.authorName are
-  // ignored except for the gritter pop-up.
   if (!context.authorName) context.authorName = context.author;
-  const msgForGritter = document.createElement('span');
-  msgForGritter.dataset.l10nId = typeId;
-  msgForGritter.append(defaultMsg[type]);
-  context.text = msgForGritter.outerHTML;
+  // Suppress core's "new chat message" gritter (chat.ts triggers it whenever
+  // chat is closed and ctx.duration > 0). Join/leave events are not chat
+  // messages users sent, and surfacing them as gritters has surprising
+  // side-effects: the popup is often the first .gritter-item in the DOM, so
+  // unrelated tests that wait for a gritter (e.g. core's
+  // error_sanitization.spec) grab "unnamedjoined the pad" instead of the
+  // gritter they actually triggered.
+  context.duration = 0;
 
   // Override the default rendering.
   const timeElt = document.createElement('span');
