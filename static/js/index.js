@@ -43,7 +43,11 @@ exports.chatNewMessage = async (hookName, context) => {
   msgElt.classList.add('ep_chat_log_join_leave-message');
   msgElt.dataset.l10nId = typeId;
   msgElt.append(defaultMsg[type]);
-  context.rendered = document.createElement('p');
+  // Etherpad core appends real chat messages to #chattext as <p>. Tests
+  // (and other plugins) often locate them with `#chattext p` in strict
+  // mode, which then trips on these synthetic join/leave entries.
+  // Render them as <div> so plain `p` selectors only match real chat.
+  context.rendered = document.createElement('div');
   context.rendered.classList.add(typeId);
   context.rendered.append(timeElt, nameElt, ' ', msgElt);
 

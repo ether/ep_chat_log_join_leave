@@ -1,5 +1,17 @@
+/*
+ * The join/leave entries are rendered as <div> rather than <p> so test
+ * locators that target real chat (`#chattext p`) don't trip on them.
+ * Core (pad/chat.css) and the colibris skin both style `#chattext p`
+ * directly though — mirror those rules here so the entries still look
+ * flush with regular chat lines. Padding matches the colibris override
+ * (4px 10px) since that's the default shipped skin.
+ */
 #chattext .ep_chat_log_join_leave-join,
 #chattext .ep_chat_log_join_leave-leave {
+  padding: 4px 10px;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   font-size: smaller;
   font-style: italic;
 }
