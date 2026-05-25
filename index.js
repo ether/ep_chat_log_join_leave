@@ -13,10 +13,10 @@ const ChatMessage = (() => {
   }
 })();
 const assert = require('assert').strict;
-const log4js = require('ep_etherpad-lite/node_modules/log4js');
+const {createLogger} = require('ep_plugin_helpers/logger');
 const padMessageHandler = require('ep_etherpad-lite/node/handler/PadMessageHandler');
 
-const logger = log4js.getLogger('ep_chat_log_join_leave');
+const logger = createLogger('ep_chat_log_join_leave');
 
 if (ChatMessage == null) {
   logger.error('This version of Etherpad is unsupported. ' +
